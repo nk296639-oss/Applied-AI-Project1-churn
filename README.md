@@ -1,1 +1,20 @@
 # project_1
+### Week 2: Building ML Models
+
+In Week 2, different machine learning models were developed and evaluated for customer churn prediction. A baseline model was first created by predicting that every customer would stay. This baseline achieved an accuracy of 73.5%. However, because approximately 26.5% of the customers are churners, the baseline completely failed to identify churners, resulting in a recall of 0%. This shows that accuracy alone is not sufficient for evaluating a churn prediction model.
+
+Logistic Regression and Random Forest were the best-performing models, with both achieving a test AUC of approximately 0.842. At the default probability threshold of 0.5, Logistic Regression achieved 80.7% accuracy, 65.8% precision, and 56.7% recall. Random Forest achieved 80.7% accuracy, 67.3% precision, and 52.9% recall. These results show that both models were able to identify a significant portion of customers who were likely to churn.
+
+The Random Forest permutation-importance analysis identified the main factors associated with churn prediction. The three most important features were Tenure, TotalCharges, and Contract_Two year. Other important features included InternetService_Fiber optic and Contract_One year. These features provide useful information about which customer characteristics contribute most to the model's predictions.
+
+The probability threshold was also analyzed because the cost of missing a potential churner is higher than the cost of making an unnecessary retention offer. The empirical business-cost analysis selected a threshold of 0.15, while the theoretical threshold was approximately 0.14. This calculation was based on an assumed cost of PKR 6,000 for a missed churner, or false negative, and PKR 1,000 for an unnecessary retention offer, or false positive. Therefore, a lower threshold can be used to identify more potential churners.
+
+The threshold analysis demonstrated an important trade-off between recall and precision. For example, at a threshold of 0.2, churn recall increased to 85.6%, compared with 56.7% at the default threshold of 0.5. However, precision decreased from 65.8% to 46.7%. This means that lowering the threshold allows the model to identify more potential churners, but it also results in more customers being incorrectly classified as likely to churn.
+
+Class imbalance was another important consideration. The balanced Logistic Regression model increased recall from 56.7% to 78.1%, while precision decreased from 65.8% to 50.5%. This demonstrates the trade-off between identifying a larger number of churners and generating more false-positive predictions.
+
+Feature engineering was also performed by creating four new features: n_services, is_new, charge_per_mo, and price_jump. However, these engineered features did not improve the Random Forest model's performance. The AUC changed only slightly from 0.8422 before feature engineering to 0.8420 after feature engineering. Therefore, the additional features did not provide a meaningful improvement in predictive performance.
+
+A Decision Tree model was also examined to understand the effect of tree depth and overfitting. Increasing the tree depth improved training accuracy, but after a certain point, the test accuracy decreased. For example, an unrestricted Decision Tree achieved 99.8% training accuracy but only 74.2% test accuracy, which indicates overfitting. In comparison, a depth-5 Decision Tree achieved 80.1% training accuracy and 79.4% test accuracy, showing a smaller gap between training and test performance.
+
+The main lesson from Week 2 is that accuracy alone is not enough when evaluating a customer churn prediction model. Precision, recall, F1-score, AUC, class imbalance, probability threshold selection, feature importance, overfitting, and business costs must also be considered. The model should therefore be evaluated not only according to its statistical performance but also according to the practical business objective of identifying customers who are likely to churn.
