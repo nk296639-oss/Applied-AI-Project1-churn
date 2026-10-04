@@ -168,4 +168,6 @@ $$\Delta\text{AUC} = 0.8420 - 0.8422 = -0.0002 \;\Rightarrow\; \text{no improvem
 $$w_c = \frac{n}{2\, n_c}$$
 
 $$\Delta R = 0.781 - 0.567 = +0.214, \qquad \Delta P = 0.505 - 0.658 = -0.153, \qquad \Delta F_1 = 0.613 - 0.609 = +0.004$$
-**7. Biggest lesson:** A single test score can mislead: my 80.7% accuracy was only 7.2 points above a baseline that always predicts "Stay" (73.5%), so I now judge models by cross-validated AUC and by business cost, not one accuracy number.
+**7.
+
+Biggest lesson:** A single test score can mislead: my 80.7% accuracy was only 7.2 points above a baseline that always predicts "Stay" (73.5%), so I now judge models by cross-validated AUC and by business cost, not one accuracy number.
