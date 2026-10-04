@@ -1,4 +1,4 @@
-# project_1
+# Applied-AI-Project1-churn
 ### Week 2: Building ML Models
 
 In Week 2, different machine learning models were developed and evaluated for customer churn prediction. A baseline model was first created by predicting that every customer would stay. This baseline achieved an accuracy of 73.5%. However, because approximately 26.5% of the customers are churners, the baseline completely failed to identify churners, resulting in a recall of 0%. This shows that accuracy alone is not sufficient for evaluating a churn prediction model.
