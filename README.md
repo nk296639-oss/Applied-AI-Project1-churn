@@ -15,426 +15,94 @@ Class imbalance was another important consideration. The balanced Logistic Regre
 
 Feature engineering was also performed by creating four new features: n_services, is_new, charge_per_mo, and price_jump. However, these engineered features did not improve the Random Forest model's performance. The AUC changed only slightly from 0.8422 before feature engineering to 0.8420 after feature engineering. Therefore, the additional features did not provide a meaningful improvement in predictive performance.
 
-A Decision Tree model was also examined to understand the effect of tree depth and overfitting. Increasing the tree depth improved training accuracy, but after a certain point, the test accuracy decreased. For example, an unrestricted Decision Tree achieved 99.8% training accuracy but only 74.2% test accuracy, which indicates overfitting. In comparison, a depth-5 Decision Tree achieved 80.1% training accuracy and 79.4% test accuracy, showing a smaller gap between training and test performance.
+A Decision Tree model was also examined to understand the effect of tree depth and overfitting. Increasing the tree depth mproved training accuracy, but after a certain point, the test accuracy decreased. For example, an unrestricted Decision Tree achieved 99.8% training accuracy but only 74.2% test accuracy, which indicates overfitting. In comparison, a depth-5 Decision Tree achieved 80.1% training accuracy and 79.4% test accuracy, showing a smaller gap between training and test performance.
 
 The main lesson from Week 2 is that accuracy alone is not enough when evaluating a customer churn prediction model. Precision, recall, F1-score, AUC, class imbalance, probability threshold selection, feature importance, overfitting, and business costs must also be considered. The model should therefore be evaluated not only according to its statistical performance but also according to the practical business objective of identifying customers who are likely to churn.
 
-# Week 3: Model Optimization and Unsupervised Learning
 
-## Dataset and Preprocessing
-The project uses the **Telco Customer Churn dataset** containing:
+## Week 3: Model Optimization and Unsupervised Learning
 
-- Total customers = **7,043**
-- Original features = **21 columns**
-- Features after one-hot encoding = **30**
-- Training samples = **5,634**
-- Test samples = **1,409**
-- Churn rate in training data = **26.5%**
-- Churn rate in test data = **26.5%**
+### Setup
+- Dataset: Telco Customer Churn, 7,043 rows, 30 features after one-hot encoding
+- Split: 80/20 stratified, random_state=42 (5,634 train / 1,409 test), churn rate 26.5% in both
+- Baseline (always predict "Stay"): accuracy = 1035 / 1409 = 0.735
 
-The target variable was converted into binary form:
+### Results
 
-\[
-y =
-\begin{cases}
-1, & \text{if Churn = Yes}\\
-0, & \text{if Churn = No}
-\end{cases}
-\]
+- **Split-to-split accuracy range across 20 seeds:** [min] to [max]
+  Mean: x̄ = (1/20) Σ acc_i, std: s = sqrt( Σ (acc_i − x̄)² / 19 )
+  (single-seed reference, seed 42: LR 0.807, RF 0.807)
 
-The data was split using an 80:20 stratified train-test split.
+- **5-fold CV AUC:** LR [X ± s], RF [X ± s], XGBoost [X ± s]
+  CV mean = (1/5) Σ AUC_k
+  (single test split, seed 42: LR 0.842, RF 0.842)
 
----
+- **Tuning:** best RF params [..]; grid vs random search time [..]
+  Grid search cost = number of combinations × 5 folds fits
+  (current RF: n_estimators=300, max_features='sqrt', min_samples_leaf=5)
 
-## Model Performance
+- **Test AUC of final model (used once):** [X]
 
-The baseline model always predicts the majority class.
+- **Customer segments (k = [k]):** [name 1, churn %], [name 2, churn %], ...
+  K-means objective: J = Σ_i || x_i − μ_c(i) ||²
+  Silhouette: s(i) = (b(i) − a(i)) / max(a(i), b(i))
 
-**Baseline accuracy:**
+- **PCA:** [n] of 30 components explain 90% of the variance
+  Explained variance ratio: EVR_j = λ_j / Σ_k λ_k; choose the smallest n with Σ_{j≤n} EVR_j ≥ 0.90
 
-\[
-Accuracy = \frac{\text{Correct Predictions}}{\text{Total Predictions}}
-\]
-
-\[
-Accuracy = \frac{1035}{1409} \approx 0.735
-\]
-
-Therefore:
-
-**Baseline accuracy = 73.5%**
-
-### Logistic Regression
-
-The Logistic Regression model achieved:
-
-- Accuracy = **80.7%**
-- Precision = **65.8%**
-- Recall = **56.7%**
-- F1-score = **60.9%**
-- Test AUC = approximately **0.842**
-
-The Logistic Regression probability is calculated using the sigmoid function:
-
-\[
-P(Y=1|X)=\frac{1}{1+e^{-z}}
-\]
-
-where
-
-\[
-z=\beta_0+\beta_1x_1+\beta_2x_2+\cdots+\beta_nx_n
-\]
-
-For one test customer, the notebook obtained:
-
-\[
-z=-3.070
-\]
-
-Therefore:
-
-\[
-P=\frac{1}{1+e^{-(-3.070)}}\approx0.0444
-\]
-
-So the predicted probability of churn for that customer was approximately:
-
-\[
-\boxed{4.44\%}
-\]
+- **Biggest lesson:** [one sentence]
 
 ---
 
-## Random Forest Optimization
+### Calculations from my notebook
 
-The Random Forest model used:
-
-- Number of trees = **300**
-- `max_features = sqrt`
-- `min_samples_leaf = 5`
-- OOB evaluation enabled
-- `random_state = 42`
-
-Results:
-
-- OOB accuracy = **80.3%**
-- Test accuracy = **80.7%**
-- Test AUC = **0.842**
-
-The Random Forest achieved approximately the same AUC as Logistic Regression.
-
-### Feature Importance
-
-The most important features according to permutation importance were:
-
-1. **Tenure** = 0.0404
-2. **TotalCharges** = 0.0206
-3. **Contract_Two year** = 0.0164
-4. **InternetService_Fiber optic** = 0.0132
-5. **Contract_One year** = 0.0059
-
-This indicates that customer tenure and billing/contract-related variables are important for predicting churn.
-
----
-
-## Confusion Matrix Calculation
-
-For Logistic Regression, the notebook obtained:
-
-- True Negative (TN) = **925**
-- False Positive (FP) = **110**
-- False Negative (FN) = **162**
-- True Positive (TP) = **212**
-
-### Accuracy
-
-\[
-Accuracy=\frac{TP+TN}{TP+TN+FP+FN}
-\]
-
-\[
-Accuracy=\frac{212+925}{212+925+110+162}
-\]
-
-\[
-Accuracy=\frac{1137}{1409}=0.807
-\]
-
-\[
-\boxed{Accuracy=80.7\%}
-\]
-
-### Precision
-
-\[
-Precision=\frac{TP}{TP+FP}
-\]
-
-\[
-Precision=\frac{212}{212+110}
-=\frac{212}{322}
-\approx0.658
-\]
-
-\[
-\boxed{Precision=65.8\%}
-\]
-
-### Recall
-
-\[
-Recall=\frac{TP}{TP+FN}
-\]
-
-\[
-Recall=\frac{212}{212+162}
-=\frac{212}{374}
-\approx0.567
-\]
-
-\[
-\boxed{Recall=56.7\%}
-\]
-
-### F1-score
-
-\[
-F1=2\frac{Precision\times Recall}{Precision+Recall}
-\]
-
-\[
-F1=2\frac{(0.658)(0.567)}{0.658+0.567}
-\approx0.609
-\]
-
-\[
-\boxed{F1=60.9\%}
-\]
-
----
-
-## Class-Balanced Logistic Regression
-
-Because churn is the minority class, a balanced Logistic Regression model was also tested.
-
-Results:
-
-| Model | Accuracy | Precision | Recall | F1 |
-|---|---:|---:|---:|---:|
-| Logistic Regression | 80.7% | 65.8% | 56.7% | 60.9% |
-| Balanced Logistic Regression | 73.9% | 50.5% | 78.1% | 61.3% |
-
-The balanced model increased recall from:
-
-\[
-56.7\% \rightarrow 78.1\%
-\]
-
-but reduced precision and overall accuracy.
-
-This shows the trade-off between identifying more churn customers and producing fewer false alarms.
-
----
-
-## Feature Engineering
-
-Additional features were created:
-
-### Number of Services
-
-\[
-n\_services=\sum_{i=1}^{7} I(Service_i=Yes)
-\]
-
-where \(I(\cdot)\) is an indicator function.
-
-### New Customer Indicator
-
-\[
-is\_new=
-\begin{cases}
-1,& tenure\leq12\\
-0,& tenure>12
-\end{cases}
-\]
-
-### Charge Per Month
-
-\[
-charge\_per\_mo=
-\frac{TotalCharges}{\max(tenure,1)}
-\]
-
-The `max(tenure,1)` operation prevents division by zero.
-
-### Price Jump
-
-\[
-price\_jump=MonthlyCharges-charge\_per\_mo
-\]
-
-However, after feature engineering, the Random Forest AUC changed only slightly:
-
-\[
-AUC_{before}=0.8422
-\]
-
-\[
-AUC_{after}=0.8420
-\]
-
-Change:
-
-\[
-\Delta AUC=0.8420-0.8422=-0.0002
-\]
-
-Thus, the additional engineered features did **not improve the Random Forest model** on this test split.
-
----
-
-## Week 3 Required Metrics
-
-### Split-to-split accuracy across 20 seeds
-
-**Not available in the uploaded notebook.**
-
-The notebook uses a single train-test split:
-
-\[
-random\_state=42
-\]
-
-Therefore, a minimum-to-maximum accuracy range across 20 seeds cannot be calculated from the current notebook.
-
-**Current available test accuracy: 80.7%.**
-
----
-
-### 5-fold Cross-Validation AUC
-
-The uploaded notebook does **not implement 5-fold cross-validation**.
-
-Therefore:
-
-- LR CV AUC = **Not calculated**
-- RF CV AUC = **Not calculated**
-- XGBoost CV AUC = **Not calculated**
-
-The available single test-split AUC values are:
-
-\[
-AUC_{LR}\approx0.842
-\]
-
-\[
-AUC_{RF}=0.842
-\]
-
----
-
-### Hyperparameter Tuning
-
-The uploaded notebook does not contain GridSearchCV or RandomizedSearchCV.
-
-The Random Forest parameters actually used were:
-
-\[
-n\_estimators=300
-\]
-
-\[
-max\_features=\text{'sqrt'}
-\]
-
-\[
-min\_samples\_leaf=5
-\]
-
-\[
-random\_state=42
-\]
-
-Therefore:
-
-- Best RF parameters from grid search = **Not calculated**
-- Grid Search time = **Not calculated**
-- Random Search time = **Not calculated**
-
----
-
-### Final Model Test AUC
-
-The Random Forest achieved:
-
-\[
-\boxed{Test\ AUC=0.842}
-\]
-
-The feature-engineered Random Forest achieved:
-
-\[
-AUC=0.8420
-\]
-
-Therefore, the original Random Forest was retained as the better of the two tested RF versions.
-
----
-
-## Customer Segmentation
-
-Customer segmentation using K-Means was **not implemented in the uploaded notebook**.
-
-Therefore:
-
-\[
-k=\text{Not calculated}
-\]
-
-and customer segment names/churn percentages cannot be reported without performing the clustering analysis.
-
----
-
-## PCA
-
-PCA was **not implemented in the uploaded notebook**.
-
-The dataset contains **30 encoded features**, but the notebook does not calculate how many principal components explain 90% of the variance.
-
-Therefore:
-
-\[
-n\text{ components for 90\% variance}=\text{Not calculated}
-\]
-
-The PCA calculation would normally use:
-
-\[
-ExplainedVarianceRatio_i=
-\frac{\lambda_i}{\sum_{j=1}^{30}\lambda_j}
-\]
-
-and the required number of components \(n\) would be the smallest value satisfying:
-
-\[
-\sum_{i=1}^{n} ExplainedVarianceRatio_i \geq 0.90
-\]
-
----
-
-## Model Comparison
+**Model comparison (test set, n = 1409)**
 
 | Model | Accuracy | Precision | Recall | F1 | AUC |
-|---|---:|---:|---:|---:|---:|
-| Baseline | 73.5% | 0.0% | 0.0% | 0.0% | 0.500 |
-| Logistic Regression | 80.7% | 65.8% | 56.7% | 60.9% | 0.842 |
-| Balanced LR | 73.9% | 50.5% | 78.1% | 61.3% | 0.841 |
-| Decision Tree | 79.6% | 63.2% | 55.1% | 58.9% | 0.829 |
-| Random Forest | **80.7%** | **67.3%** | 52.9% | 59.3% | **0.842** |
+|---|---|---|---|---|---|
+| Baseline | 0.735 | 0.000 | 0.000 | 0.000 | 0.500 |
+| Logistic Regression | 0.807 | 0.658 | 0.567 | 0.609 | 0.842 |
+| LR balanced | 0.739 | 0.505 | 0.781 | 0.613 | 0.841 |
+| Decision Tree (depth 5) | 0.796 | 0.632 | 0.551 | 0.589 | 0.829 |
+| Random Forest | 0.807 | 0.673 | 0.529 | 0.593 | 0.842 |
 
----
+**Logistic regression**
+- Model: P(churn) = σ(z) = 1 / (1 + e^(−z)), where z = b + Σ w_j x_j
+- Check on test row 0: z = −3.070, so P = 1 / (1 + e^(3.070)) = 1 / (1 + 21.54) = 0.0444, which matches sklearn (0.0444).
+- Odds ratio = e^w:
+  - tenure: e^(−1.220) = 0.295, so each +1 standard deviation of tenure cuts churn odds by about 70.5%
+  - Fiber optic: e^(0.779) = 2.179, so churn odds are about 2.2× higher
+  - Two-year contract: e^(−0.589) = 0.555
 
-## Biggest Lesson
+**Confusion matrix:** TN = 925, FP = 110, FN = 162, TP = 212
+- Accuracy = (TP + TN) / n = (212 + 925) / 1409 = 0.807
+- Precision = TP / (TP + FP) = 212 / 322 = 0.658
+- Recall = TP / (TP + FN) = 212 / 374 = 0.567
+- F1 = 2PR / (P + R) = 2(0.658)(0.567) / (0.658 + 0.567) = 0.609
 
-**The biggest lesson is that model optimization should be based on the appropriate evaluation metric: Random Forest and Logistic Regression achieved similar AUC (≈0.842), while class balancing greatly improved churn recall from 56.7% to 78.1% at the cost of lower precision and accuracy.**
+**Business cost and threshold**
+- Cost = FN × C_FN + FP × C_FP, with C_FN = 6000 PKR and C_FP = 1000 PKR
+- Theoretical optimal threshold: t* = C_FP / (C_FP + C_FN) = 1000 / 7000 = 0.143; the empirical best was 0.15.
+- Cost at several thresholds (TP, FN, FP recovered from recall and flagged counts):
+
+| Threshold | FN | FP | Total cost (PKR) |
+|---|---|---|---|
+| Never flag anyone | 374 | 0 | 374 × 6000 = 2,244,000 |
+| 0.5 | 162 | 110 | 972,000 + 110,000 = 1,082,000 |
+| 0.4 | 124 | 191 | 744,000 + 191,000 = 935,000 |
+| 0.3 | 92 | 262 | 552,000 + 262,000 = 814,000 |
+| 0.2 | 54 | 365 | 324,000 + 365,000 = 689,000 |
+
+  Lowering the threshold from 0.5 to 0.2 saves 1,082,000 − 689,000 = 393,000 PKR (36%).
+
+**Decision tree: overfitting**
+- Best test accuracy at depth 6 (0.797); train/test gap = 0.807 − 0.797 = 0.010.
+- Unlimited depth: train 0.998, test 0.742, gap = 0.256 (overfitting).
+
+**Random forest**
+- OOB accuracy 0.803, test accuracy 0.807, test AUC 0.842
+- Top permutation importance (drop in AUC): tenure 0.0404, TotalCharges 0.0206, two-year contract 0.0164
+
+**Feature engineering:** ΔAUC = 0.8420 − 0.8422 = −0.0002, so the new features did not help.
+
+**Class weighting:** `class_weight='balanced'` moved recall from 0.567 to 0.781 (+0.214) but dropped precision from 0.658 to 0.505 (−0.153), with F1 almost unchanged (0.609 → 0.613).
