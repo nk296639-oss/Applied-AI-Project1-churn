@@ -68,7 +68,7 @@ where $a(i)$ is the mean distance to points in the same cluster and $b(i)$ the m
 
 $$\Sigma = \frac{1}{N-1}Z^{\top}Z, \qquad \Sigma\,\mathbf{v}_j = \lambda_j \mathbf{v}_j, \qquad \text{EVR}_j = \frac{\lambda_j}{\sum_{k=1}^{30}\lambda_k}$$
 
-$$n^{*} = \min\left\{ n : \sum_{j=1}^{n}\text{EVR}_j \ge 0.90 \right\}$$
+
 
 **7. Biggest lesson:** [one sentence]
 
@@ -136,7 +136,6 @@ The empirical best threshold was $0.15$, close to the theoretical $t^{*}$.
 | 0.3 | 92 | 262 | $552{,}000 + 262{,}000 = 814{,}000$ |
 | 0.2 | 54 | 365 | $324{,}000 + 365{,}000 = 689{,}000$ |
 
-$$\text{Saving}_{0.5 \to 0.2} = 1{,}082{,}000 - 689{,}000 = 393{,}000\ \text{PKR} \quad\left(\frac{393{,}000}{1{,}082{,}000} = 36\%\right)$$
 
 #### Decision tree: overfitting
 
