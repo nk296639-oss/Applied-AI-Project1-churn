@@ -181,7 +181,7 @@ Biggest lesson:** A single test score can mislead: my 80.7% accuracy was only 7.
 
 | | |
 |---|---|
-| 🔗 **Live app** | **https://applied-ai-project1-churn-vu7jsmzahgvklaeejflutz.streamlit.app/** ← *paste your public URL here* |
+| 🔗 **Live app** | **https://applied-ai-project1-churn-vu7jsmzahgvklaeejflutz.streamlit.app/** |
 | 💻 **Code** |https://github.com/nk296639-oss/Applied-AI-Project1-churn/blob/main/week-3-model-optimization-lab4.ipynb |
 | 📓 **Notebooks (Weeks 1 to 3)** | *https://github.com/nk296639-oss/Applied-AI-Project1-churn* |
 | 🏷️ **Version** | v1.0 |
