@@ -537,48 +537,7 @@ joblib
 
 ---
 
-## Write it: lab answers
 
-### After Part 1: skew demo and parity
-
-The same two-year customer scored **0.012** with the correct serving encoder and **0.136** with the Week 3 encoder (about 11× in probability, 13× in odds). They differ because `drop_first=True` on one row drops the only Contract category present, so both Contract columns become 0 and the model reads the customer as Month-to-month. **Parity result:** largest difference 0.0 on 7,043 customers, test passed. **What-if:** a two-year contract lowers risk the most (0.935 → 0.765), but that is an association: customers who choose two-year contracts may simply be more loyal, so offering one need not make this customer stay.
-
-### After Part 2: building the app
-
-*Describe one behavior of the app that surprised you, and one input a real user might enter that the app still handles badly.*
-
-- **Surprise:** *[write yours here]*
-- **Handled badly:** *[write yours here]*
-
-### After Part 3: deployment
-
-- **Public URL:** *[paste it here]*
-- **Did the first deployment succeed?** *[yes / no]*
-- **If not, the error line and the fix:** *[quote the error line and explain what fixed it]*
-
----
-
-## Check your understanding
-
-**1. Why does `get_dummies(drop_first=True)` break predictions when scoring a single customer?**
-It drops the first category *present in the data it is given*. With one row, the only category is dropped, so both Contract columns become 0, which the model reads as Month-to-month. Here P(churn) went from 0.012 to 0.136 with no error.
-
-**2. What does the parity test compare, and why must it cover every training row rather than a few?**
-It compares the training-path probabilities `predict_proba(X[cols])` with the serving-path probabilities `predict_proba(prepare_input(raw, cols))`. Bugs hide in rare categories: if 50 of 7,043 customers are affected, a 5-row test misses them with probability $(1-0.0071)^5 = 96.5\%$.
-
-**3. Should the model be loaded with `st.cache_resource` or `st.cache_data`? Why?**
-`st.cache_resource`. A model is a shared object that should load once per server and be reused as the same object. `st.cache_data` serializes and returns a fresh copy of the result on each call, which is slow and wasteful for a model.
-
-**4. Why does the app derive `TotalCharges` instead of asking the user to type it?**
-`TotalCharges` is approximately `tenure × MonthlyCharges`, so a typed value can contradict the other inputs (for example 4 months of tenure and $5,000 total) and create an impossible customer the model has never seen. Deriving it ($4 \times 85 = \$340$) keeps the input consistent.
-
-**5. Why must `requirements.txt` pin the exact scikit-learn version used in training?**
-The joblib file stores scikit-learn objects by their internal structure, so a different version may warn, fail to load, or silently behave differently. We pin `scikit-learn==1.6.1`, and also `xgboost`, because the final model is XGBoost.
-
-**6. The what-if shows a two-year contract lowers risk from 0.79 to 0.27. Would offering one make the customer stay? How could a company find out?**
-Not necessarily. The model only learned an association; customers on two-year contracts may be loyal for other reasons (confounding and selection bias). A company can find out with a **randomized A/B test**: offer the contract to a random half of a high-risk group, offer nothing to the other half, and compare retention after a few months. Uplift modelling on the results can then find the customers who are actually persuadable.
-
----
 
 ## Limitations and future work
 
