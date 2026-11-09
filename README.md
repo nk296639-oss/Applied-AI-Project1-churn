@@ -183,7 +183,7 @@ Biggest lesson:** A single test score can mislead: my 80.7% accuracy was only 7.
 |---|---|
 | 🔗 **Live app** | **https://applied-ai-project1-churn-vu7jsmzahgvklaeejflutz.streamlit.app/** ← *paste your public URL here* |
 | 💻 **Code** |https://github.com/nk296639-oss/Applied-AI-Project1-churn/blob/main/week-3-model-optimization-lab4.ipynb |
-| 📓 **Notebooks (Weeks 1 to 3)** | *paste your Kaggle notebook links here* |
+| 📓 **Notebooks (Weeks 1 to 3)** | *https://github.com/nk296639-oss/Applied-AI-Project1-churn* |
 | 🏷️ **Version** | v1.0 |
 
 ---
@@ -251,7 +251,7 @@ Biggest lesson:** A single test score can mislead: my 80.7% accuracy was only 7.
 ### 1. One customer scoring
 
 <!-- Replace the file name below with your screenshot -->
-![One customer screenshot](screenshots/one_customer.png)
+![One customer screenshot](single_customer.png)
 
 <br>
 
@@ -262,7 +262,7 @@ Biggest lesson:** A single test score can mislead: my 80.7% accuracy was only 7.
 ### 2. Batch scoring result
 
 <!-- Replace the file name below with your screenshot -->
-![Batch scoring screenshot](screenshots/batch_result.png)
+![Batch scoring screenshot](batch_scoring.png)
 
 <br>
 
@@ -270,11 +270,7 @@ Biggest lesson:** A single test score can mislead: my 80.7% accuracy was only 7.
 
 &nbsp;
 
-### 3. (Optional) Model insights tab
 
-![Model insights screenshot](screenshots/model_insights.png)
-
-&nbsp;
 
 ---
 
